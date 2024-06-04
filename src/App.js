@@ -1,25 +1,30 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import AddPlayer from './Components/AddPlayer';
+import ScoreBoard from './Components/ScoreBoard';
 import './App.css';
 
+
 function App() {
+  const [players, setPlayers] = useState([]);
+
+  const addPlayer = (name) => {
+    setPlayers([...players, { name, score: 0 }]);
+  };
+
+  const updateScore = (index, delta) => {
+    const newPlayers = [...players];
+    newPlayers[index].score += delta;
+    setPlayers(newPlayers);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Score Counter</h1>
+      <AddPlayer addPlayer={addPlayer} />
+      <ScoreBoard players={players} updateScore={updateScore} />
     </div>
   );
 }
+
 
 export default App;
