@@ -1,6 +1,15 @@
 /* General styles */
+
+body {
+  background-color: black;
+  color: white; /* Optional: change text color to white for better contrast */
+}
+
+/* Ensure the App component or any other main container uses full height */
 .App {
+  min-height: 100vh; /* Ensures the background color covers the entire viewport height */
   text-align: center;
+  padding: 20px;
 }
 
 /* Styles for the scoreboard */
@@ -13,7 +22,8 @@
 
 /* Styles for each player component */
 .player {
-  width: 300px; /* Set a fixed width for each player component */
+  width: 70%; /* Set a fixed width for each player component */
+  min-width: 500px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -24,22 +34,53 @@
 }
 
 .name {
-  font-size: 20px;
+  font-size: 50px;
   width: 50%;
 }
 
-/* Styles for input fields */
-input[type="text"] {
-  width: 50px;
-  text-align: center;
+.score {
+  margin: 0 20px;
+  font-size: 50px;
 }
 
-.add-player-input {
+/* Styles for input fields */
+input[type="text"], input[type="number"] {
+  width: 100px;
+  text-align: center;
+  margin: 0 5px;
+}
+
+/* Remove increment controls from number input */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+input.add-player-input {
   width: 100px;
 }
+
+input.increment-input {
+  width: 50px;
+}
+
 
 /* Styles for buttons */
 button {
   margin: 0 5px;
   padding: 5px 10px;
+  background-color: black;
+  color: white;
+}
+
+/* Chart styles */
+.chart-container {
+  width: 80%;
+  margin: 20px auto;
+  height: 400px;
 }
