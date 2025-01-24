@@ -40,7 +40,7 @@ function Player({ index, name, score, updateScore, removePlayer, undoLastScore, 
       removePlayer(index);
     } else if (e.key === 'a') {
       console.log('Adding score to database');
-      addScore(name, score);
+      addScore(name, score); 
     }
   };
 

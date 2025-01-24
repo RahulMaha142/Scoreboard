@@ -103,7 +103,8 @@ function App() {
   };
 
   const addScore = async (playername, score) => {
-    try{
+    // const game_name = 'Game 1'; // Replace with the actual game name or pass it as a parameter
+    try {
       const response = await fetch('http://localhost:5001/add-score', {
         method: 'POST',
         headers: {
@@ -112,15 +113,13 @@ function App() {
         body: JSON.stringify({ game_name, playername, score }),
       });
       const data = await response.json();
-
+  
       if (response.ok) {
         console.log('Score added to game successfully:', data);
-      }
-      else {
+      } else {
         console.error('Failed to add score:', data.error);
       }
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Error adding score:', err);
     }
   };

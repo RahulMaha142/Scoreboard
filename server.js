@@ -102,23 +102,35 @@ app.post('/add-game', async (req, res) => {
 
 // Endpoint to add a score
 app.post('/add-score', async (req, res) => {
-  const { game_id, player_id, score } = req.body;
-  // get the game id based on game name
-  game_id = await pool.query(
-    'SELECT game_id FROM games WHERE game_name = $1',
-    [game_id]
-  );
-  // get the player id based on player name
-  player_id = await pool.query(
-    'SELECT player_id FROM players WHERE name = $1',
-    [player_id]
-  );
+  const { game_name, playername, score } = req.body;
 
-  if (!game_id || !player_id || !score) {
-    return res.status(400).json({ error: 'Game ID, player ID, and score are required' });
+  if (!game_name || !playername || !score) {
+    return res.status(400).json({ error: 'Game name, player name, and score are required' });
   }
 
   try {
+    // Get the game ID based on the game name
+    const gameResult = await pool.query(
+      'SELECT game_id FROM games WHERE game_name = $1',
+      [game_name]
+    );
+    if (gameResult.rows.length === 0) {
+      console.log('Game not found', game_name);
+      return res.status(404).json({ error: 'Game not found' });
+    }
+    const game_id = gameResult.rows[0].game_id;
+
+    // Get the player ID based on the player name
+    const playerResult = await pool.query(
+      'SELECT player_id FROM players WHERE name = $1',
+      [playername]
+    );
+    if (playerResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Player not found' });
+    }
+    const player_id = playerResult.rows[0].player_id;
+
+    // Insert the score
     const result = await pool.query(
       'INSERT INTO scores (game_id, player_id, score) VALUES ($1, $2, $3) RETURNING *',
       [game_id, player_id, score]
