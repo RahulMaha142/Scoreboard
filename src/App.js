@@ -3,6 +3,7 @@ import AddPlayer from './Components/AddPlayer';
 import ScoreBoard from './Components/ScoreBoard';
 import ScoreChart from './Components/ScoreChart';
 import SetThreshold from './Components/SetLimit';
+import AnalyticsDashboard from './Components/Analytics/AnalyticsDashboard';
 import './App.css';
 
 const playerColors = ['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#0000FF', '#FF00FF'];
@@ -168,7 +169,8 @@ function App() {
         addScore={addScore}
       />
       <ScoreChart players={players} />
-      <div>
+      <div> 
+        {/* Experimental query */}
         <h1>Find Name by ID</h1>
         <input
           type="text"
@@ -198,6 +200,10 @@ function App() {
         
         <button onClick={() => addGame(game_name, winner)}>Add Game</button>
       </div>
+      <div>
+        <AnalyticsDashboard />
+      </div>
+        
 
     </div>
   );

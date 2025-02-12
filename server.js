@@ -75,8 +75,6 @@ app.post('/add-player', async (req, res) => {
   }
 });
 
-// Endpoint to remove a player
-
 // Endpoint to add a game
 app.post('/add-game', async (req, res) => {
   const {game_name, winner} = req.body;
@@ -138,6 +136,65 @@ app.post('/add-score', async (req, res) => {
     res.status(201).json({ success: true, score: result.rows[0] });
   } catch (err) {
     console.error('Error adding score:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// Endpoint to get games
+// Returns a list of all games with details (game ID, game name, winner, timestamp)
+app.get('/games', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM games ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching games:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// Endpoint to get splayer stats (specific to a player)
+app.get('/player-stats/:player_id', async (req, res) => {
+  const { player_id } = req.params;
+  try {
+    const totalWins = await pool.query(
+      'SELECT COUNT(*) FROM games WHERE winner = $1',
+      [player_id]
+    );
+    const totalPoints = await pool.query(
+      'SELECT SUM(score) FROM scores WHERE player_id = $1',
+      [player_id]
+    );
+    const gamesPlayed = await pool.query(
+      'SELECT COUNT(DISTINCT game_id) FROM scores WHERE player_id = $1',
+      [player_id]
+    );
+    res.json({
+      totalWins: totalWins.rows[0].count,
+      totalPoints: totalPoints.rows[0].sum,
+      averagePoints: totalPoints.rows[0].sum / gamesPlayed.rows[0].count,
+    });
+  } catch (err) {
+    console.error('Error fetching player stats:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// endpoint to get all player stats
+app.get('/all-player-stats', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT players.player_id, players.name,
+        COUNT(games.winner) AS total_wins,
+        SUM(scores.score) AS total_points,
+        COUNT(DISTINCT scores.game_id) AS games_played
+      FROM players
+      LEFT JOIN games ON players.player_id = games.winner
+      LEFT JOIN scores ON players.player_id = scores.player_id
+      GROUP BY players.player_id
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching all player stats:', err);
     res.status(500).json({ error: 'Database error' });
   }
 });
