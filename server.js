@@ -184,12 +184,11 @@ app.get('/all-player-stats', async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT players.player_id, players.name,
-        COUNT(games.winner) AS total_wins,
+		(select count(1)from games g where g.winner = players.player_id) as total_wins,
         SUM(scores.score) AS total_points,
-        COUNT(DISTINCT scores.game_id) AS games_played
+        COUNT( scores.game_id) AS games_played
       FROM players
-      LEFT JOIN games ON players.player_id = games.winner
-      LEFT JOIN scores ON players.player_id = scores.player_id
+      LEFT JOIN scores ON players.player_id = scores.player_id 
       GROUP BY players.player_id
     `);
     res.json(result.rows);
